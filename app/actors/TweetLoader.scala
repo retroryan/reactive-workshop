@@ -6,6 +6,7 @@ import play.api.libs.json._
 import scala.util.Failure
 import scala.util.Success
 import utils.WSUtils
+import akka.cluster.Cluster
 
 /**
  * Tweet Loader Actor
@@ -14,12 +15,16 @@ class TweetLoader extends Actor with ActorLogging with SettingsActor {
 
     implicit val ec: ExecutionContext = context.system.dispatcher
 
+    private val selfAddress: Address = Cluster.get(context.system).selfAddress
+    log.info(s"TweetLoader running at ${selfAddress}")
+
     override def receive: Receive = {
 
         case TweetLoader.LoadTweet(search) => {
             val querySender = sender()
             fetchTweets(search) onComplete {
                 case Success(respJson) ⇒ {
+                    log.info(s"sending back json: ${respJson.toString().size}")
                     querySender ! TweetLoader.NewTweet(respJson)
                 }
                 case Failure(f) ⇒ {

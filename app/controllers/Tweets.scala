@@ -27,9 +27,7 @@ object Tweets extends Controller {
     implicit val sentimentAskTimeout: Timeout = Duration(10, SECONDS)
 
     def search(query: String) = Action.async {
-
         val tweetLoaderRef: ActorRef = Akka.system.actorOf(TweetLoader.props())
-
         tweetLoaderRef ! TweetLoader.LoadTweet(query)
 
         (tweetLoaderRef ? TweetLoader.LoadTweet(query)).mapTo[JsObject].map {
