@@ -5,6 +5,7 @@ import stockActors.StockManagerActor
 import akka.contrib.pattern.ClusterSingletonManager
 
 import actors.{TweetLoader, Settings}
+import backend.journal.SharedJournalSetter
 
 /**
  * Main class for starting cluster nodes.
@@ -23,6 +24,8 @@ object MainClusterManager extends BaseApp {
             ),
             "singleton"
         )
+
+        system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
     }
 
 }

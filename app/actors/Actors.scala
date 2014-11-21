@@ -5,6 +5,7 @@ import play.api.libs.concurrent.Akka
 import stockActors.{SentimentActor, StockManagerActor}
 import akka.routing.FromConfig
 import akka.contrib.pattern.ClusterSingletonProxy
+import backend.journal.SharedJournalSetter
 
 /**
  * Lookup for actors used by the web front end.
@@ -47,4 +48,6 @@ class Actors(app: Application) extends Plugin {
     private lazy val sentimentActor = system.actorOf(FromConfig.props(SentimentActor.props), "sentimentRouter")
 
     private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
+
+    //system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
 }
