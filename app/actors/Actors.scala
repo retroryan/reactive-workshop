@@ -39,7 +39,7 @@ class Actors(app: Application) extends Plugin {
 
     // private lazy val tweetLoader = system.actorOf(TweetLoader.props, "tweetLoader")
     private lazy val tweetLoader = system.actorOf(
-        ClusterSingletonProxy.props("/user/singleton/tweetLoader", Some("backend")),
+        ClusterSingletonProxy.props("/user/tweetLoader-singleton/tweetLoader", Some("backend")),
         "tweetLoaderProxy")
 
 
@@ -47,7 +47,10 @@ class Actors(app: Application) extends Plugin {
     //instead of creating the actor from props, tell Akka to create it from the properties in the config file.
     private lazy val sentimentActor = system.actorOf(FromConfig.props(SentimentActor.props), "sentimentRouter")
 
-    private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
+    //private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
+    private lazy val stockManagerActor = system.actorOf(
+        ClusterSingletonProxy.props("/user/stockManager-singleton/stockManager", Some("backend")),
+        "stockManagerProxy")
 
 
 }

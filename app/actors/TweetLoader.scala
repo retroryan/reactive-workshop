@@ -24,7 +24,6 @@ class TweetLoader extends Actor with ActorLogging with SettingsActor {
             val querySender = sender()
             fetchTweets(search) onComplete {
                 case Success(respJson) ⇒ {
-                    log.info(s"sending back json: ${respJson.toString().size}")
                     querySender ! TweetLoader.NewTweet(respJson)
                 }
                 case Failure(f) ⇒ {

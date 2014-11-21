@@ -13,7 +13,17 @@ import backend.journal.SharedJournalSetter
 object MainClusterManager extends BaseApp {
 
     override protected def initialize(system: ActorSystem, settings: Settings): Unit = {
-        system.actorOf(StockManagerActor.props, "stockManager")
+        //system.actorOf(StockManagerActor.props, "stockManager")
+
+        system.actorOf(
+            ClusterSingletonManager.props(
+                StockManagerActor.props,
+                "stockManager",
+                PoisonPill,
+                Some("backend")
+            ),
+            "stockManager-singleton"
+        )
 
         system.actorOf(
             ClusterSingletonManager.props(
@@ -22,10 +32,10 @@ object MainClusterManager extends BaseApp {
                 PoisonPill,
                 Some("backend")
             ),
-            "singleton"
+            "tweetLoader-singleton"
         )
 
-        system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
+        //system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
     }
 
 }

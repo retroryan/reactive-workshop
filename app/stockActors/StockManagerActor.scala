@@ -7,6 +7,7 @@ class StockManagerActor extends Actor with ActorLogging {
 
     def receive = {
         case watchStock@WatchStock(symbol) =>
+            log.info(s"StockManagerActor WatchStock $symbol")
             // get or create the StockActor for the symbol and forward this message
             context.child(symbol).getOrElse {
                 context.actorOf(StockActor.props(symbol), symbol)

@@ -6,7 +6,7 @@ import play.api.libs.json.JsValue
 
 import scala.concurrent.duration._
 
-class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with ActorLogging with SettingsActor {
+class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with ActorLogging {
 
     var maybeQuery: Option[String] = None
 
@@ -16,9 +16,11 @@ class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with Ac
 
         case UserActor.FetchTweets =>
             maybeQuery.foreach { query =>
+                log.info(s"query = $query")
                 tweetLoaderClient ! TweetLoader.LoadTweet(query)
             }
         case TweetLoader.NewTweet(tweetUpdate) =>
+            log.info(s"NewTweet = ${tweetUpdate.toString().length}")
             out ! tweetUpdate
 
         case message: JsValue =>

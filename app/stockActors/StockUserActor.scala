@@ -19,6 +19,7 @@ class StockUserActor(out: ActorRef, stockManager: ActorRef) extends Actor with A
 
     // watch the default stocks
     for (stockSymbol <- settings.DEFAULT_STOCKS.asScala) {
+        log.info(s"StockUserActor Adding $stockSymbol")
         stockManager ! StockManagerActor.WatchStock(stockSymbol)
     }
 
