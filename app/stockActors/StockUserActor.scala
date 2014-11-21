@@ -2,7 +2,6 @@ package stockActors
 
 import akka.actor.{Props, ActorLogging, Actor, ActorRef}
 import play.api.libs.json._
-import play.Play
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
 import play.api.libs.json.JsNumber
