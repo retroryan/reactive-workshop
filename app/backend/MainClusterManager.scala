@@ -35,7 +35,7 @@ object MainClusterManager extends BaseApp {
             "tweetLoader-singleton"
         )
 
-        //system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
+        system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
     }
 
 }
