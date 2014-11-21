@@ -16,7 +16,7 @@ class IntegrationSpec extends WordSpec with MustMatchers {
     "work from within a browser" in new WithBrowser {
 
       browser.goTo("http://localhost:" + port)
-      browser.pageSource must include ("Hello Play Framework")
+      browser.pageSource must include ("TweetMap")
     }
   }
 }
