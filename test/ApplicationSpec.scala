@@ -22,7 +22,7 @@ class ApplicationSpec extends WordSpec with MustMatchers {
 
       status(home) must be(OK)
       contentType(home) must be(Some("text/html"))
-      contentAsString(home) must include ("Hello Play Framework")
+      contentAsString(home) must include ("TweetMap")
     }
   }
 }
