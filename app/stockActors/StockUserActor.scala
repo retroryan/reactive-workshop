@@ -1,21 +1,22 @@
 package stockActors
 
-import akka.actor.{Props, ActorLogging, Actor, ActorRef}
+import akka.actor._
 import play.api.libs.json._
-import play.Play
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
-import play.api.libs.json.JsNumber
 
 import scala.collection.JavaConverters._
-import stockActors.StockManagerActor.StockHistory
 import actors.SettingsActor
+import play.api.libs.json.JsArray
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
+import scala.Some
+import play.api.libs.json.JsNumber
+import stockActors.StockManagerActor.StockHistory
 
 /** The out actor is wired in by Play Framework when this Actor is created.
   * When a message is sent to out the Play Framework then sends it to the client WebSocket.
   *
   * */
-class StockUserActor(out: ActorRef, stockManager: ActorRef) extends Actor with ActorLogging with SettingsActor {
+class StockUserActor(out: ActorRef, stockManager: ActorSelection) extends Actor with ActorLogging with SettingsActor {
 
 
     // watch the default stocks
@@ -57,7 +58,7 @@ class StockUserActor(out: ActorRef, stockManager: ActorRef) extends Actor with A
 
 
 object StockUserActor {
-    def props(out: ActorRef, stockManager: ActorRef): Props =
+    def props(out: ActorRef, stockManager: ActorSelection): Props =
         Props(new StockUserActor(out, stockManager))
 
 }

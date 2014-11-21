@@ -3,6 +3,7 @@ package actors
 import play.api._
 import play.api.libs.concurrent.Akka
 import stockActors.{SentimentActor, StockManagerActor}
+import akka.actor.{Address, RootActorPath}
 
 /**
  * Lookup for actors used by the web front end.
@@ -38,5 +39,9 @@ class Actors(app: Application) extends Plugin {
 
     private lazy val sentimentActor = system.actorOf(SentimentActor.props, "sentimentActor")
 
-    private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
+    //change to the stock manager to be looked up remotely
+    private val address = Address("akka.tcp", "application", "localhost", 2555)
+    private val path = RootActorPath(address) / "user" / "stockManager"
+    private lazy val stockManagerActor = system.actorSelection(path)
+
 }
