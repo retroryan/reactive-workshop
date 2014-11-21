@@ -3,6 +3,7 @@ package actors
 import play.api._
 import play.api.libs.concurrent.Akka
 import stockActors.{SentimentActor, StockManagerActor}
+import akka.routing.FromConfig
 
 /**
  * Lookup for actors used by the web front end.
@@ -36,7 +37,9 @@ class Actors(app: Application) extends Plugin {
 
     private lazy val tweetLoader = system.actorOf(TweetLoader.props, "tweetLoader")
 
-    private lazy val sentimentActor = system.actorOf(SentimentActor.props, "sentimentActor")
+    //private lazy val sentimentActor = system.actorOf(SentimentActor.props, "sentimentActor")
+    //instead of creating the actor from props, tell Akka to create it from the properties in the config file.
+    private lazy val sentimentActor = system.actorOf(FromConfig.props(SentimentActor.props),"sentimentRouter")
 
     private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
 }

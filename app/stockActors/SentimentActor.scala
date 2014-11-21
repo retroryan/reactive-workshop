@@ -1,6 +1,6 @@
 package stockActors
 
-import akka.actor.{Props, Actor, ActorLogging}
+import akka.actor.{Address, Props, Actor, ActorLogging}
 import play.api.libs.json.{JsObject, JsString, Json, JsValue}
 import scala.concurrent.Future
 import play.api.libs.ws.WSResponse
@@ -9,10 +9,14 @@ import utils.WSUtils
 
 import akka.pattern.pipe
 import model.Tweet
+import akka.cluster.Cluster
 
 class SentimentActor extends Actor with ActorLogging with SettingsActor {
 
     import context.dispatcher
+
+    private val selfAddress: Address = Cluster.get(context.system).selfAddress
+    log.info(s"SentimentActor running at ${selfAddress}")
 
     override def receive: Receive = {
         case SentimentActor.GetSentiment(symbol) => {
