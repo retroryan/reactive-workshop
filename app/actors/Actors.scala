@@ -40,7 +40,7 @@ class Actors(app: Application) extends Plugin {
     private lazy val sentimentActor = system.actorOf(SentimentActor.props, "sentimentActor")
 
     //change to the stock manager to be looked up remotely
-    private val address = Address("akka.tcp", "application", "localhost", 2555)
+    private val address = Address("akka.tcp", "application", "172.20.24.200", 2555)
     private val path = RootActorPath(address) / "user" / "stockManager"
     private lazy val stockManagerActor = system.actorSelection(path)
 
