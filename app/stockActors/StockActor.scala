@@ -12,7 +12,7 @@ import stockActors.StockManagerActor.StockHistory
 import stockActors.StockManagerActor.UnwatchStock
 import akka.pattern.ask
 import akka.util.Timeout
-import akka.persistence.{SnapshotOffer, PersistentActor}
+import akka.persistence.{RecoveryCompleted, SnapshotOffer, PersistentActor}
 
 /**
  * There is one StockActor per stock symbol.  The StockActor maintains a list of users watching the stock and the stock
@@ -29,7 +29,7 @@ class StockActor(symbol: String) extends PersistentActor with ActorLogging {
         return "symbol_" + symbol
     }
 
-    protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
+    protected[this] var watchers: Set[ActorRef] = Set.empty[ActorRef]
 
     val rand = Random
 
@@ -75,8 +75,29 @@ class StockActor(symbol: String) extends PersistentActor with ActorLogging {
         }
     }
 
+    protected[this] var recoveryWatchers: Set[ActorRef] = Set.empty[ActorRef]
 
     override def receiveRecover: Receive = {
+        case EventWatcherAdded(watcher) => recoveryWatchers = recoveryWatchers + watcher
+        case EventWatcherRemover(watcher) => recoveryWatchers = recoveryWatchers - watcher
+        case SnapshotOffer(_, takeSnapshot:TakeSnapshot) => {
+            stockHistory = takeSnapshot.stockHistory
+            log.info(s"recovering stockHistory size: ${stockHistory.size}")
+            takeSnapshot.watchers.foreach(watcher => recoveryWatchers + watcher)
+        }
+        case RecoveryCompleted => {
+            if (recoveryWatchers.isEmpty) {
+                stockTick.cancel()
+                context.stop(self)
+            }
+            else {
+                recoveryWatchers.foreach(watcher => addWatcherIfAlive(watcher))
+                recoveryWatchers = Set.empty
+            }
+        }
+    }
+
+   /* override def receiveRecover: Receive = {
         case EventWatcherAdded(watcher) => addWatcherIfAlive(watcher)
         case EventWatcherRemover(watcher) => watchers = watchers - watcher
         case SnapshotOffer(_, takeSnapshot:TakeSnapshot) => {
@@ -85,7 +106,7 @@ class StockActor(symbol: String) extends PersistentActor with ActorLogging {
             takeSnapshot.watchers.foreach(watcher => addWatcherIfAlive(watcher))
         }
     }
-
+*/
     private def addWatcherIfAlive(watcher: ActorRef) {
         (watcher ? Identify(watcher.path.name)).mapTo[ActorIdentity].map {
             actorIdentity =>
@@ -114,7 +135,7 @@ object StockActor {
 
     case class EventWatcherRemover(watcher: ActorRef)
 
-    case class TakeSnapshot(stockHistory: Queue[Double], watchers: HashSet[ActorRef])
+    case class TakeSnapshot(stockHistory: Queue[Double], watchers: Set[ActorRef])
 
     case class AddWatcherAfterRecover(watcher: ActorRef)
 
