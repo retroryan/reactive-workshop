@@ -6,7 +6,7 @@ import play.api.libs.json.JsValue
 
 import scala.concurrent.duration._
 
-class UserActor(out: ActorRef, tweetLoader: ActorRef) extends Actor with ActorLogging {
+class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with ActorLogging {
 
     var maybeQuery: Option[String] = None
 
@@ -15,14 +15,14 @@ class UserActor(out: ActorRef, tweetLoader: ActorRef) extends Actor with ActorLo
     def receive = {
 
         case UserActor.FetchTweets =>
-        //if there is a query available send a message to tweetLoader to fetch the tweets
-
-        // handle new tweets that are sent back from tweet loader
-        // case TweetLoader.NewTweet(tweetUpdate) =>
-        // by sending a message to out the actor sends a message to the websocket and up to the client
-        // out ! tweetUpdate
+            maybeQuery.foreach { query =>
+                tweetLoaderClient ! TweetLoader.LoadTweet(query)
+            }
+        case TweetLoader.NewTweet(tweetUpdate) =>
+            out ! tweetUpdate
 
         case message: JsValue =>
+            log.info(s"setting query: $message")
             maybeQuery = (message \ "query").asOpt[String]
 
     }
@@ -35,10 +35,12 @@ class UserActor(out: ActorRef, tweetLoader: ActorRef) extends Actor with ActorLo
 
 object UserActor {
 
-    def props(out: ActorRef, tweetServiceClient: ActorRef): Props = {
+    def props(out:ActorRef, tweetServiceClient: ActorRef): Props = {
         Props(new UserActor(out, tweetServiceClient))
     }
 
     case object FetchTweets
+
+
 
 }

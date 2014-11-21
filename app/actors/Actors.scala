@@ -2,6 +2,7 @@ package actors
 
 import play.api._
 import play.api.libs.concurrent.Akka
+import stockActors.{SentimentActor, StockManagerActor}
 
 /**
  * Lookup for actors used by the web front end.
@@ -14,7 +15,11 @@ object Actors {
     /**
      * Get the tweet loader client.
      */
-    // def tweetLoader(implicit app: Application) = actors.tweetLoader
+    def tweetLoader(implicit app: Application) = actors.tweetLoader
+
+    def sentimentActor(implicit app: Application) = actors.sentimentActor
+
+    def stockManagerActor(implicit app: Application) = actors.stockManagerActor
 }
 
 /**
@@ -27,8 +32,11 @@ class Actors(app: Application) extends Plugin {
     private def system = Akka.system(app)
 
     override def onStart() = {
-
     }
 
-   //  private lazy val tweetLoader = system.actorOf(TweetLoader.props, "tweetLoader")
+    private lazy val tweetLoader = system.actorOf(TweetLoader.props, "tweetLoader")
+
+    private lazy val sentimentActor = system.actorOf(SentimentActor.props, "sentimentActor")
+
+    private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
 }

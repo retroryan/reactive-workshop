@@ -1,9 +1,11 @@
 @(message: String)
 
+
 @main(message) {
 
-    <div class="well">
-        <h1>@message</h1>
+    <div ng-controller="Tweets">
+        <ul>
+            <li ng-repeat="tweet in tweets">{{tweet.text}}</li>
+        </ul>
     </div>
-
 }
