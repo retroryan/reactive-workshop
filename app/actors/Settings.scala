@@ -19,6 +19,8 @@ class Settings(system: ExtendedActorSystem) extends Extension {
 
     val GEOCODE_URL = config.getString("geocode.url")
 
+    val DEFAULT_STOCKS = config.getStringList("default.stocks")
+
 
 }
 

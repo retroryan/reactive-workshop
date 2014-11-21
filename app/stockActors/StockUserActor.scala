@@ -9,17 +9,17 @@ import play.api.libs.json.JsNumber
 
 import scala.collection.JavaConverters._
 import stockActors.StockManagerActor.StockHistory
+import actors.SettingsActor
 
 /** The out actor is wired in by Play Framework when this Actor is created.
   * When a message is sent to out the Play Framework then sends it to the client WebSocket.
   *
   * */
-class StockUserActor(out: ActorRef, stockManager: ActorRef) extends Actor with ActorLogging {
+class StockUserActor(out: ActorRef, stockManager: ActorRef) extends Actor with ActorLogging with SettingsActor {
 
 
     // watch the default stocks
-    val defaultStocks = Play.application.configuration.getStringList("default.stocks")
-    for (stockSymbol <- defaultStocks.asScala) {
+    for (stockSymbol <- settings.DEFAULT_STOCKS.asScala) {
         stockManager ! StockManagerActor.WatchStock(stockSymbol)
     }
 
