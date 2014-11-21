@@ -49,5 +49,5 @@ class Actors(app: Application) extends Plugin {
 
     private lazy val stockManagerActor = system.actorOf(StockManagerActor.props, "stockManagerActor")
 
-    //system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
+
 }

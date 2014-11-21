@@ -6,7 +6,7 @@ import play.api.libs.json.JsValue
 
 import scala.concurrent.duration._
 
-class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with ActorLogging {
+class UserActor(out:ActorRef, tweetLoaderClient: ActorRef) extends Actor with ActorLogging with SettingsActor {
 
     var maybeQuery: Option[String] = None
 

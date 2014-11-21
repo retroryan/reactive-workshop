@@ -3,6 +3,7 @@ package actors
 import akka.actor.{ Actor, ExtendedActorSystem, Extension, ExtensionKey }
 import akka.util.Timeout
 import scala.concurrent.duration.{ Duration, FiniteDuration, MILLISECONDS => Millis }
+import backend.journal.SharedJournalSetter
 
 object Settings extends ExtensionKey[Settings]
 
@@ -21,6 +22,7 @@ class Settings(system: ExtendedActorSystem) extends Extension {
 
     val DEFAULT_STOCKS = config.getStringList("default.stocks")
 
+    system.actorOf(SharedJournalSetter.props, "shared-journal-setter")
 
 }
 
